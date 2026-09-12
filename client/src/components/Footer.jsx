@@ -1,6 +1,5 @@
 import React from "react";
 import { Logo } from "./Logo";
-import "./Footer.css";
 
 export const Footer = ({
   activeTab = "home",
@@ -18,42 +17,45 @@ export const Footer = ({
   const handleNavigation = (id) => {
     if (id === "studio") {
       onOpenStudio();
-    } else {
-      onTabChange(id);
     }
+    onTabChange(id);
   };
 
   return (
-    <footer className="shaili-footer">
-      <div className="shaili-footer-container">
-        {/* MAIN FOOTER */}
-        <div className="shaili-footer-content">
+    <footer className="bg-[#0A2E2C] text-[#FAF4ED] border-t border-[#F5DABF]/30 py-12 sm:py-16 px-4 sm:px-6 lg:px-8 mt-16 select-none">
+      <div className="max-w-7xl mx-auto space-y-12">
+        {/* MAIN FOOTER CONTENT */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 sm:gap-12">
+          
           {/* BRAND */}
-          <div className="shaili-footer-brand">
+          <div className="md:col-span-5 space-y-4">
             <Logo variant="dark" size="medium" />
 
-            <p className="shaili-footer-tagline">
+            <p className="font-serif text-lg font-bold text-[#F5DABF] tracking-tight">
               Where Indian Culture Meets AI in Fashion.
             </p>
 
-            <p className="shaili-footer-description">
-              Intelligent wardrobe curation and personalized outfit
-              recommendations built around what you already own.
+            <p className="text-xs text-[#FAF4ED]/80 leading-relaxed max-w-sm font-medium">
+              Intelligent wardrobe curation and personalized outfit recommendations built around what you already own.
             </p>
           </div>
 
-          {/* NAVIGATION */}
-          <div className="shaili-footer-navigation">
-            <h3 className="shaili-footer-heading">Editorial Suite</h3>
+          {/* NAVIGATION LINKS */}
+          <div className="md:col-span-3 space-y-3">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-[#F5DABF]">
+              Editorial Suite
+            </h3>
 
-            <div className="shaili-footer-links">
+            <div className="flex flex-col space-y-2 text-xs font-semibold">
               {navigation.map((item) => (
                 <button
                   key={item.id}
                   type="button"
                   onClick={() => handleNavigation(item.id)}
-                  className={`shaili-footer-link ${
-                    activeTab === item.id ? "active" : ""
+                  className={`text-left transition-colors cursor-pointer py-1 ${
+                    activeTab === item.id
+                      ? "text-[#F5DABF] font-bold"
+                      : "text-[#FAF4ED]/70 hover:text-[#FAF4ED]"
                   }`}
                 >
                   {item.label}
@@ -63,25 +65,29 @@ export const Footer = ({
           </div>
 
           {/* NEWSLETTER */}
-          <div className="shaili-footer-newsletter">
-            <h3 className="shaili-footer-heading">The ShAili Edit</h3>
+          <div className="md:col-span-4 space-y-3">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-widest text-[#F5DABF]">
+              The ShAili Edit
+            </h3>
 
-            <p className="shaili-footer-newsletter-text">
-              Stay inspired with curated styling insights and contemporary
-              Indian fashion stories.
+            <p className="text-xs text-[#FAF4ED]/80 leading-relaxed font-medium">
+              Stay inspired with curated styling insights and contemporary Indian fashion stories.
             </p>
 
             <form
-              className="shaili-footer-form"
+              className="flex gap-2 pt-1"
               onSubmit={(e) => e.preventDefault()}
             >
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="shaili-footer-input"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#F5DABF]/40 bg-[#0F3D3A] text-xs text-[#FAF4ED] placeholder-[#FAF4ED]/50 focus:outline-none focus:ring-2 focus:ring-[#F5DABF]"
               />
 
-              <button type="submit" className="shaili-footer-subscribe">
+              <button
+                type="submit"
+                className="px-4 py-2.5 bg-[#6C151E] hover:bg-[#541017] text-[#FAF4ED] text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md flex-shrink-0 cursor-pointer"
+              >
                 Subscribe →
               </button>
             </form>
@@ -89,19 +95,23 @@ export const Footer = ({
         </div>
 
         {/* BOTTOM BAR */}
-        <div className="shaili-footer-bottom">
-          <div className="shaili-footer-copyright">
-            © 2026 SHAILI FASHION TECH
-            <span> • </span>
-            All Rights Reserved
+        <div className="pt-8 border-t border-[#F5DABF]/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-[#FAF4ED]/60 font-mono">
+          <div>
+            © 2026 SHAILI FASHION TECH <span className="text-[#6C151E]"> • </span> All Rights Reserved
           </div>
 
-          <div className="shaili-footer-legal">
-            <button type="button">Privacy Protocol</button>
+          <div className="flex gap-4">
+            <button type="button" className="hover:text-[#FAF4ED] transition-colors cursor-pointer">
+              Privacy Protocol
+            </button>
             <span>·</span>
-            <button type="button">Terms of Service</button>
+            <button type="button" className="hover:text-[#FAF4ED] transition-colors cursor-pointer">
+              Terms of Service
+            </button>
             <span>·</span>
-            <button type="button">Security Overview</button>
+            <button type="button" className="hover:text-[#FAF4ED] transition-colors cursor-pointer">
+              Security Overview
+            </button>
           </div>
         </div>
       </div>

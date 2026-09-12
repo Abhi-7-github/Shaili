@@ -51,9 +51,20 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* Main Shaili Animated Opening & Landing Page */}
-          <Route path="/" element={<ShailiLandingPage />} />
-          <Route path="/landing" element={<ShailiLandingPage />} />
+          {/* Main Shaili App protected routes: user must be logged in to enter */}
+          <Route path="/" element={<ProtectedRoute><ShailiLandingPage /></ProtectedRoute>} />
+          <Route path="/home" element={<ProtectedRoute><ShailiLandingPage /></ProtectedRoute>} />
+          <Route path="/wardrobe" element={<ProtectedRoute><ShailiLandingPage /></ProtectedRoute>} />
+          <Route path="/mywardrobe" element={<ProtectedRoute><ShailiLandingPage /></ProtectedRoute>} />
+          <Route path="/aistyle" element={<ProtectedRoute><ShailiLandingPage /></ProtectedRoute>} />
+          <Route path="/aistylist" element={<ProtectedRoute><ShailiLandingPage /></ProtectedRoute>} />
+          <Route path="/stylist" element={<ProtectedRoute><ShailiLandingPage /></ProtectedRoute>} />
+          <Route path="/studio" element={<ProtectedRoute><ShailiLandingPage /></ProtectedRoute>} />
+          <Route path="/outfitstudio" element={<ProtectedRoute><ShailiLandingPage /></ProtectedRoute>} />
+          <Route path="/insights" element={<ProtectedRoute><ShailiLandingPage /></ProtectedRoute>} />
+          <Route path="/styleinsights" element={<ProtectedRoute><ShailiLandingPage /></ProtectedRoute>} />
+          <Route path="/history" element={<ProtectedRoute><ShailiLandingPage /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><ShailiLandingPage /></ProtectedRoute>} />
 
           {/* Login route: /login */}
           <Route
@@ -75,12 +86,6 @@ function App() {
             }
           />
 
-          {/* Dashboard route: /home */}
-          <Route
-            path="/home"
-            element={<ShailiLandingPage />}
-          />
-
           {/* Upload route: /upload */}
           <Route
             path="/upload"
@@ -92,7 +97,7 @@ function App() {
           />
 
           {/* Fallback route */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

@@ -16,6 +16,20 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const getStoredAvatar = (userData) => {
+    if (!userData) return null;
+    const userId = userData._id || userData.id;
+    return localStorage.getItem(`shaili_avatar_${userId}`) || userData.avatar || null;
+  };
+
+  const enrichUser = (userData) => {
+    if (!userData) return null;
+    return {
+      ...userData,
+      avatar: getStoredAvatar(userData),
+    };
+  };
+
   // Check auth state on mount if token exists
   useEffect(() => {
     const verifyUser = async () => {
@@ -33,7 +47,7 @@ export const AuthProvider = ({ children }) => {
         const data = await response.json();
 
         if (response.ok && data.success) {
-          setUser(data.user);
+          setUser(enrichUser(data.user));
         } else {
           // Token expired or invalid
           localStorage.removeItem(TOKEN_STORAGE_KEY);
@@ -65,7 +79,6 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ name, email, password, gender }),
       });
 
-
       const data = await response.json();
 
       if (!response.ok || !data.success) {
@@ -74,7 +87,7 @@ export const AuthProvider = ({ children }) => {
 
       localStorage.setItem(TOKEN_STORAGE_KEY, data.token);
       setToken(data.token);
-      setUser(data.user);
+      setUser(enrichUser(data.user));
       return { success: true };
     } catch (err) {
       setError(err.message);
@@ -102,12 +115,24 @@ export const AuthProvider = ({ children }) => {
 
       localStorage.setItem(TOKEN_STORAGE_KEY, data.token);
       setToken(data.token);
-      setUser(data.user);
+      setUser(enrichUser(data.user));
       return { success: true };
     } catch (err) {
       setError(err.message);
       return { success: false, message: err.message };
     }
+  };
+
+  // Update profile photo action
+  const updateProfilePhoto = (photoUrl) => {
+    if (!user) return;
+    const userId = user._id || user.id;
+    if (photoUrl) {
+      localStorage.setItem(`shaili_avatar_${userId}`, photoUrl);
+    } else {
+      localStorage.removeItem(`shaili_avatar_${userId}`);
+    }
+    setUser((prev) => (prev ? { ...prev, avatar: photoUrl } : null));
   };
 
   // Logout action
@@ -129,6 +154,7 @@ export const AuthProvider = ({ children }) => {
         signup,
         login,
         logout,
+        updateProfilePhoto,
         isAuthenticated: !!user,
       }}
     >

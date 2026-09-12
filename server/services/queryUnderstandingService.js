@@ -2,9 +2,10 @@ const { GoogleGenAI } = require('@google/genai');
 const { VALID_CATEGORIES } = require('./imageAnalysisService');
 
 let aiClient = null;
-if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here') {
+const geminiApiKey = process.env.GEMINI_API_KEY || process.env.AI_API_KEY;
+if (geminiApiKey && geminiApiKey !== 'your_gemini_api_key_here' && geminiApiKey !== 'your_ai_api_key_here') {
   try {
-    aiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    aiClient = new GoogleGenAI({ apiKey: geminiApiKey });
   } catch (err) {
     console.warn('Gemini client initialization failed, falling back to local ML keyword tokenizer:', err.message);
   }
@@ -94,7 +95,7 @@ const parseQuery = async (queryString = '') => {
       Return JSON ONLY in this format: {"categories": ["cat1"], "keywords": ["kw1"]}`;
 
       const response = await client.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-2.0-flash',
         contents: prompt,
         config: {
           responseMimeType: "application/json",
