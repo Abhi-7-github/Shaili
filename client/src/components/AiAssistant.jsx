@@ -49,7 +49,7 @@ export const AiAssistant = () => {
 
     try {
       const lower = cleanQuery.toLowerCase();
-      
+
       // 1. LANGUAGE DETECTION
       let detectedLang = 'en'; // default to english
       if (/[\u0C00-\u0C7F]/.test(cleanQuery) || lower.includes('pelli') || lower.includes('vesukovali') || lower.includes('cheyyi')) {
@@ -70,12 +70,12 @@ export const AiAssistant = () => {
       let intent = 'general';
       const searchKw = ['show', 'photo', 'picture', 'find', 'memory', 'చూపించు', 'ఫోటోలు', 'காட்டு', 'புகைப்படங்களை', 'दिखाओ', 'तस्वीरें'];
       const outfitKw = [
-        'outfit', 'wear', 'suggest', 'recommend', 'party', 'wedding', 'marriage', 'college', 'casual', 'vesukovali', 'pehnu', 'what can i', 'pelli', 'shaadi', 
-        'शादी', 'पहनूं', 'पार्टी', 'कॉलेज', 'ऑफिस', 'यात्रा', 'दिवाली', 'सुझाव', 'क्या पहनूं', 
-        'పెళ్లికి', 'పెళ్లి', 'పుట్టినరోజు', 'కాలేజీకి', 'ఆఫీసుకి', 'డేట్కి', 'ట్రావెల్కి', 'దీపావళికి', 'వేసుకోవాలి', 'ఏం వేసుకోవాలి', 
+        'outfit', 'wear', 'suggest', 'recommend', 'party', 'wedding', 'marriage', 'college', 'casual', 'vesukovali', 'pehnu', 'what can i', 'pelli', 'shaadi',
+        'शादी', 'पहनूं', 'पार्टी', 'कॉलेज', 'ऑफिस', 'यात्रा', 'दिवाली', 'सुझाव', 'क्या पहनूं',
+        'పెళ్లికి', 'పెళ్లి', 'పుట్టినరోజు', 'కాలేజీకి', 'ఆఫీసుకి', 'డేట్కి', 'ట్రావెల్కి', 'దీపావళికి', 'వేసుకోవాలి', 'ఏం వేసుకోవాలి',
         'கல்யாணத்திற்கு', 'பிறந்தநாள்', 'பார்ட்டிக்கு', 'கல்லூரிக்கு', 'அலுவலகத்திற்கு', 'டேட்டிற்கு', 'பயணத்திற்கு', 'தீபாவளிக்கு', 'அணியலாம்'
       ];
-      
+
       const hasSearchKw = searchKw.some(kw => lower.includes(kw));
       const hasOutfitKw = outfitKw.some(kw => lower.includes(kw));
       const isExplicitSearch = (lower.includes('show') || lower.includes('find') || lower.includes('చూపించు') || lower.includes('காட்டு') || lower.includes('दिखाओ')) && (lower.includes('photo') || lower.includes('picture') || lower.includes('ఫోటోలు') || lower.includes('புகைப்படங்களை') || lower.includes('तस्वीरें'));
@@ -99,7 +99,7 @@ export const AiAssistant = () => {
             retrievedImages = searchData.images;
           }
         }
-        
+
         const aiMsg = {
           id: Date.now() + 1,
           sender: 'ai',
@@ -109,21 +109,25 @@ export const AiAssistant = () => {
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         };
         setMessages((prev) => [...prev, aiMsg]);
-        
+
       } else if (intent === 'recommendation') {
         const chatHistory = messages.filter(m => m.text).slice(-6).map(m => ({ role: m.sender === 'ai' ? 'assistant' : 'user', content: m.text }));
-        
+
         try {
-          if (!token) throw new Error('Not authenticated');
+          const headers = { 'Content-Type': 'application/json' };
+          if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+          }
+
           const chatRes = await fetch('/api/chat/message', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            headers,
             body: JSON.stringify({ query: cleanQuery, history: chatHistory, language: detectedLang })
           });
 
           if (!chatRes.ok) throw new Error('Backend AI unavailable');
           const chatData = await chatRes.json();
-          
+
           setMessages((prev) => [...prev, {
             id: Date.now() + 1,
             sender: 'ai',
@@ -133,14 +137,14 @@ export const AiAssistant = () => {
           }]);
         } catch (chatErr) {
           console.warn('Backend chat API failed, using local fallback:', chatErr);
-          
+
           // LOCAL FALLBACK GENERAL RECOMMENDATIONS
           let fText = '';
           if (detectedLang === 'te') fText = '✨ పండుగ/పెళ్లికి आउटफिट సూచన\n\nక్రీమ్ లేదా పాస్టెల్ రంగు కుర్తా, తెల్లటి పైజామా మరియు బ్రౌన్ ఫార్మల్ షూస్ వేసుకోవచ్చు.\n\nస్టైల్: సంప్రదాయ మరియు ఎలిగెంట్\nఎందుకు బాగుంటుంది: ఇది సంప్రదాయంగా, సింపుల్గా మరియు సొగసుగా కనిపిస్తుంది.';
           else if (detectedLang === 'ta') fText = '✨ கல்யாணத்திற்கான ஆடை பரிந்துரை\n\nகிரீம் அல்லது பாஸ்டல் நிற குர்தாவுடன் வெள்ளை பைஜாமா மற்றும் பழுப்பு நிற ஃபார்மல் காலணிகளை அணியலாம்.\n\nஸ்டைல்: பாரம்பரியம் மற்றும் நேர்த்தி\nஏன் இது சிறந்தது: இது பாரம்பரியமாகவும் நேர்த்தியாகவும் இருக்கும்.';
           else if (detectedLang === 'hi') fText = '✨ शादी के लिए आउटफिट सुझाव\n\nशादी के लिए आप क्रीम या पेस्टल रंग का कुर्ता, सफेद पायजामा और भूरे रंग के फॉर्मल जूते पहन सकते हैं। यह लुक पारंपरिक और आकर्षक लगेगा।\n\nस्टाइल: पारंपरिक और एलिगेंट\nसुझाव: एक अच्छी घड़ी या हल्की एक्सेसरी के साथ लुक को पूरा कर सकते हैं।';
           else fText = '✨ Wedding Outfit Recommendation\n\nFor a wedding, you could try a cream or pastel kurta with a white pajama and brown formal footwear. This creates a traditional and elegant look.';
-          
+
           setMessages((prev) => [...prev, {
             id: Date.now() + 1,
             sender: 'ai',
@@ -155,7 +159,7 @@ export const AiAssistant = () => {
         if (detectedLang === 'te') gText = 'నమస్కారం! నేను షైలీ AI. మీకు బట్టలు ఎంచుకోవడంలో సహాయం చేయగలను.';
         if (detectedLang === 'ta') gText = 'வணக்கம்! நான் ஷைலி AI. உங்களுக்கு ஆடைகளை தேர்ந்தெடுக்க உதவ முடியும்.';
         if (detectedLang === 'hi') gText = 'नमस्ते! मैं शैली AI हूँ। मैं आपको कपड़े चुनने में मदद कर सकती हूँ।';
-        
+
         setMessages((prev) => [...prev, {
           id: Date.now() + 1,
           sender: 'ai',

@@ -3,7 +3,7 @@ const { generateChatResponse } = require('../services/aiChatService');
 const handleChatMessage = async (req, res) => {
   try {
     const { query, history, language } = req.body;
-    const userId = req.user._id;
+    const userId = req.user ? req.user._id : null;
 
     if (!query) {
       return res.status(400).json({ success: false, message: 'Query is required' });
