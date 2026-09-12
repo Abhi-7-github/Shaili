@@ -6,6 +6,7 @@ import { Footer } from './Footer';
 import { HeroSection } from './HeroSection';
 import { DashboardHero } from './DashboardHero';
 import { OutfitStudioModal } from './OutfitStudioModal';
+import { AiAssistant } from './AiAssistant';
 import { PageTransition } from './PageTransition';
 import { Sparkles, Shirt, BarChart3, CheckCircle2, RotateCw } from 'lucide-react';
 import { SAMPLE_OUTFITS, UNDERUSED_ITEMS, WARDROBE_STATS } from '../types';
@@ -202,6 +203,9 @@ export const ShailiLandingPage = () => {
         isOpen={isStudioOpen}
         onClose={() => setIsStudioOpen(false)}
       />
+
+      {/* Floating AI Chatbot Assistant Launcher */}
+      <AiAssistant />
     </div>
   );
 };

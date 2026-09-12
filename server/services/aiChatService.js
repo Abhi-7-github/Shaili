@@ -92,7 +92,7 @@ You MUST output your response as a JSON object strictly matching this schema:
 
     const response = await chat.sendMessage({ message: query });
     const parsed = JSON.parse(response.text);
-    
+
     return {
       intent: parsed.intent || 'recommendation',
       message: parsed.message || ''
@@ -102,7 +102,7 @@ You MUST output your response as a JSON object strictly matching this schema:
     if (query.toLowerCase().includes('show') || query.toLowerCase().includes('photo') || query.toLowerCase().includes('picture')) {
       return { intent: 'search', message: '' };
     }
-    
+
     // BACKEND LOCAL FALLBACK (When Gemini hits 429 Quota Exceeded)
     const lower = query.toLowerCase();
     let occasion = 'general';
@@ -116,7 +116,7 @@ You MUST output your response as a JSON object strictly matching this schema:
     else if (lower.includes('festival') || lower.includes('diwali') || lower.includes('pongal') || lower.includes('sankranti') || lower.includes('దీపావళి') || lower.includes('தீபாவளி') || lower.includes('दिवाली')) occasion = 'festival';
 
     let fallbackMessage = '';
-    
+
     if (targetLanguage === 'Telugu') {
       const templates = {
         wedding: '✨ పెళ్లికి आउटफिट సూచన\n\nక్రీమ్ లేదా పాస్టెల్ రంగు కుర్తా, తెల్లటి పైజామా మరియు బ్రౌన్ ఫార్మల్ షూస్ వేసుకోవచ్చు.\n\nస్టైల్: సంప్రదాయ మరియు ఎలిగెంట్\nఎందుకు బాగుంటుంది: ఇది సంప్రదాయంగా, సింపుల్గా మరియు సొగసుగా కనిపిస్తుంది.',
