@@ -48,53 +48,122 @@ export const AiAssistant = () => {
     setIsTyping(true);
 
     try {
-      // Execute natural language image search via backend (OpenAI ML keyword extraction)
-      let retrievedImages = [];
-      let searchFilters = null;
-
-      if (token) {
-        const searchRes = await fetch(`/api/images/search?q=${encodeURIComponent(cleanQuery)}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const searchData = await searchRes.json();
-        if (searchRes.ok && searchData.success && searchData.images) {
-          retrievedImages = searchData.images;
-          searchFilters = searchData.filters;
-        }
-      }
-
-      // Synthesize AI conversational text response
-      let aiText = '';
       const lower = cleanQuery.toLowerCase();
-
-      if (retrievedImages.length > 0) {
-        const keywordsStr = searchFilters?.keywords?.join(', ');
-        aiText = `I analyzed your query using ML keyword extraction${
-          keywordsStr ? ` (Keywords: ${keywordsStr})` : ''
-        } and retrieved ${retrievedImages.length} memory photo${
-          retrievedImages.length > 1 ? 's' : ''
-        } from your private Cloudinary vault:`;
-      } else if (lower.includes('photo') || lower.includes('picture') || lower.includes('image') || lower.includes('show') || lower.includes('find')) {
-        aiText = `No matching memory photos found in your vault for "${cleanQuery}". You can upload new photos anytime at /upload!`;
-      } else if (lower.includes('gala') || lower.includes('parisian') || lower.includes('outfit')) {
-        aiText =
-          'For a Parisian gala, I recommend our Architectural Tailoring set in Midnight Slate (#283845) paired with a high-shine Saffron Warm Gold (#FFA649) silk camisole. This pairing creates high contrast authority with 65% slate structure and 35% amber brilliance.';
-      } else if (lower.includes('slate') || lower.includes('color') || lower.includes('saffron') || lower.includes('contrast')) {
-        aiText =
-          'The Midnight Slate & Saffron Gold palette balances deep mineral stability with vibrant solar warmth. According to your skin contrast metrics, this combination enhances natural luminosity by 24%.';
-      } else {
-        aiText = `I have analyzed your query "${cleanQuery}". Based on your SHAILI profile, I recommend exploring our Bespoke Suiting collection or uploading relevant outfit photos to your vault at /upload.`;
+      
+      // 1. LANGUAGE DETECTION
+      let detectedLang = 'en'; // default to english
+      if (/[\u0C00-\u0C7F]/.test(cleanQuery) || lower.includes('pelli') || lower.includes('vesukovali') || lower.includes('cheyyi')) {
+        detectedLang = 'te';
+      } else if (/[\u0B80-\u0BFF]/.test(cleanQuery) || lower.includes('kalyaanam') || lower.includes('kalyaanathukku') || lower.includes('enna') || lower.includes('aniyalaam')) {
+        detectedLang = 'ta';
+      } else if (/[\u0900-\u097F]/.test(cleanQuery) || lower.includes('shaadi') || lower.includes('kya') || lower.includes('pehnu') || lower.includes('liye')) {
+        detectedLang = 'hi';
       }
 
-      const aiMsg = {
-        id: Date.now() + 1,
-        sender: 'ai',
-        text: aiText,
-        images: retrievedImages,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      };
+      // Check context history for language if not confidently detected
+      if (detectedLang === 'en' && messages.length > 1) {
+        const lastAiMsg = [...messages].reverse().find(m => m.sender === 'ai' && m.lang);
+        if (lastAiMsg) detectedLang = lastAiMsg.lang;
+      }
 
-      setMessages((prev) => [...prev, aiMsg]);
+      // 2. INTENT ROUTING
+      let intent = 'general';
+      const searchKw = ['show', 'photo', 'picture', 'find', 'memory', 'చూపించు', 'ఫోటోలు', 'காட்டு', 'புகைப்படங்களை', 'दिखाओ', 'तस्वीरें'];
+      const outfitKw = [
+        'outfit', 'wear', 'suggest', 'recommend', 'party', 'wedding', 'marriage', 'college', 'casual', 'vesukovali', 'pehnu', 'what can i', 'pelli', 'shaadi', 
+        'शादी', 'पहनूं', 'पार्टी', 'कॉलेज', 'ऑफिस', 'यात्रा', 'दिवाली', 'सुझाव', 'क्या पहनूं', 
+        'పెళ్లికి', 'పెళ్లి', 'పుట్టినరోజు', 'కాలేజీకి', 'ఆఫీసుకి', 'డేట్కి', 'ట్రావెల్కి', 'దీపావళికి', 'వేసుకోవాలి', 'ఏం వేసుకోవాలి', 
+        'கல்யாணத்திற்கு', 'பிறந்தநாள்', 'பார்ட்டிக்கு', 'கல்லூரிக்கு', 'அலுவலகத்திற்கு', 'டேட்டிற்கு', 'பயணத்திற்கு', 'தீபாவளிக்கு', 'அணியலாம்'
+      ];
+      
+      const hasSearchKw = searchKw.some(kw => lower.includes(kw));
+      const hasOutfitKw = outfitKw.some(kw => lower.includes(kw));
+      const isExplicitSearch = (lower.includes('show') || lower.includes('find') || lower.includes('చూపించు') || lower.includes('காட்டு') || lower.includes('दिखाओ')) && (lower.includes('photo') || lower.includes('picture') || lower.includes('ఫోటోలు') || lower.includes('புகைப்படங்களை') || lower.includes('तस्वीरें'));
+
+      if (isExplicitSearch) {
+        intent = 'search';
+      } else if (hasOutfitKw) {
+        intent = 'recommendation';
+      } else if (hasSearchKw) {
+        intent = 'search';
+      }
+
+      if (intent === 'search') {
+        let retrievedImages = [];
+        if (token) {
+          const searchRes = await fetch(`/api/images/search?q=${encodeURIComponent(cleanQuery)}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const searchData = await searchRes.json();
+          if (searchRes.ok && searchData.success && searchData.images) {
+            retrievedImages = searchData.images;
+          }
+        }
+        
+        const aiMsg = {
+          id: Date.now() + 1,
+          sender: 'ai',
+          lang: detectedLang,
+          text: retrievedImages.length > 0 ? 'Here are the memory photos I found for you:' : 'No matching memory photos found for your query.',
+          images: retrievedImages,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        };
+        setMessages((prev) => [...prev, aiMsg]);
+        
+      } else if (intent === 'recommendation') {
+        const chatHistory = messages.filter(m => m.text).slice(-6).map(m => ({ role: m.sender === 'ai' ? 'assistant' : 'user', content: m.text }));
+        
+        try {
+          if (!token) throw new Error('Not authenticated');
+          const chatRes = await fetch('/api/chat/message', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ query: cleanQuery, history: chatHistory, language: detectedLang })
+          });
+
+          if (!chatRes.ok) throw new Error('Backend AI unavailable');
+          const chatData = await chatRes.json();
+          
+          setMessages((prev) => [...prev, {
+            id: Date.now() + 1,
+            sender: 'ai',
+            lang: detectedLang,
+            text: chatData.message || 'Sure, here is a recommendation for you.',
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          }]);
+        } catch (chatErr) {
+          console.warn('Backend chat API failed, using local fallback:', chatErr);
+          
+          // LOCAL FALLBACK GENERAL RECOMMENDATIONS
+          let fText = '';
+          if (detectedLang === 'te') fText = '✨ పండుగ/పెళ్లికి आउटफिट సూచన\n\nక్రీమ్ లేదా పాస్టెల్ రంగు కుర్తా, తెల్లటి పైజామా మరియు బ్రౌన్ ఫార్మల్ షూస్ వేసుకోవచ్చు.\n\nస్టైల్: సంప్రదాయ మరియు ఎలిగెంట్\nఎందుకు బాగుంటుంది: ఇది సంప్రదాయంగా, సింపుల్గా మరియు సొగసుగా కనిపిస్తుంది.';
+          else if (detectedLang === 'ta') fText = '✨ கல்யாணத்திற்கான ஆடை பரிந்துரை\n\nகிரீம் அல்லது பாஸ்டல் நிற குர்தாவுடன் வெள்ளை பைஜாமா மற்றும் பழுப்பு நிற ஃபார்மல் காலணிகளை அணியலாம்.\n\nஸ்டைல்: பாரம்பரியம் மற்றும் நேர்த்தி\nஏன் இது சிறந்தது: இது பாரம்பரியமாகவும் நேர்த்தியாகவும் இருக்கும்.';
+          else if (detectedLang === 'hi') fText = '✨ शादी के लिए आउटफिट सुझाव\n\nशादी के लिए आप क्रीम या पेस्टल रंग का कुर्ता, सफेद पायजामा और भूरे रंग के फॉर्मल जूते पहन सकते हैं। यह लुक पारंपरिक और आकर्षक लगेगा।\n\nस्टाइल: पारंपरिक और एलिगेंट\nसुझाव: एक अच्छी घड़ी या हल्की एक्सेसरी के साथ लुक को पूरा कर सकते हैं।';
+          else fText = '✨ Wedding Outfit Recommendation\n\nFor a wedding, you could try a cream or pastel kurta with a white pajama and brown formal footwear. This creates a traditional and elegant look.';
+          
+          setMessages((prev) => [...prev, {
+            id: Date.now() + 1,
+            sender: 'ai',
+            lang: detectedLang,
+            text: fText,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          }]);
+        }
+      } else {
+        // GENERAL CONVERSATION
+        let gText = 'Hello! I can help you search your memory vault or recommend general outfits for any occasion.';
+        if (detectedLang === 'te') gText = 'నమస్కారం! నేను షైలీ AI. మీకు బట్టలు ఎంచుకోవడంలో సహాయం చేయగలను.';
+        if (detectedLang === 'ta') gText = 'வணக்கம்! நான் ஷைலி AI. உங்களுக்கு ஆடைகளை தேர்ந்தெடுக்க உதவ முடியும்.';
+        if (detectedLang === 'hi') gText = 'नमस्ते! मैं शैली AI हूँ। मैं आपको कपड़े चुनने में मदद कर सकती हूँ।';
+        
+        setMessages((prev) => [...prev, {
+          id: Date.now() + 1,
+          sender: 'ai',
+          lang: detectedLang,
+          text: gText,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        }]);
+      }
     } catch (err) {
       console.error('Error handling chatbox query:', err);
       const errorMsg = {
@@ -152,7 +221,7 @@ export const AiAssistant = () => {
                   <div className="chat-bubble">
                     <p>{msg.text}</p>
 
-                    {/* Render Inline Cloudinary Memory Photos in Chat Bubble */}
+                    {/* Render Inline Cloudinary Memory Photos in Chat Bubble (Only for Search intent) */}
                     {msg.images && msg.images.length > 0 && (
                       <div className="chat-inline-images-grid">
                         {msg.images.map((img) => (

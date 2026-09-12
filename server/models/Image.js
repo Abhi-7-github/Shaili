@@ -46,6 +46,15 @@ const imageSchema = new mongoose.Schema(
       default: Date.now,
       index: true,
     },
+    seedSource: {
+      type: String,
+      trim: true,
+    },
+    seedKey: {
+      type: String,
+      trim: true,
+      index: true,
+    },
   },
   {
     timestamps: true,

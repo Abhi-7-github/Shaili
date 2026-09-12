@@ -65,6 +65,15 @@ export const ImageMemorySystem = () => {
   const [activeImage, setActiveImage] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
 
+  // Outfit Generation states
+  const [selectedItems, setSelectedItems] = useState(new Set());
+  const [outfitOccasion, setOutfitOccasion] = useState('Casual');
+  const [outfitStyle, setOutfitStyle] = useState('Smart Casual');
+  const [generatedOutfits, setGeneratedOutfits] = useState([]);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [showOutfitModal, setShowOutfitModal] = useState(false);
+  const [outfitError, setOutfitError] = useState('');
+
   // Load User Images on Mount
   useEffect(() => {
     fetchUserImages();
@@ -253,6 +262,58 @@ export const ImageMemorySystem = () => {
     }
   };
 
+  // Outfit Generation Handlers
+  const toggleItemSelection = (id) => {
+    const newSelection = new Set(selectedItems);
+    if (newSelection.has(id)) {
+      newSelection.delete(id);
+    } else {
+      newSelection.add(id);
+    }
+    setSelectedItems(newSelection);
+  };
+
+  const handleGenerateOutfit = async () => {
+    if (selectedItems.size === 0) {
+      setOutfitError('Please select at least one wardrobe item.');
+      return;
+    }
+    
+    setIsGenerating(true);
+    setOutfitError('');
+    setShowOutfitModal(true);
+
+    try {
+      const res = await fetch('/api/images/outfits/from-wardrobe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          itemIds: Array.from(selectedItems),
+          occasion: outfitOccasion,
+          style: outfitStyle
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setGeneratedOutfits(data.outfits);
+      } else {
+        setOutfitError(data.message || 'Failed to generate outfit');
+        setGeneratedOutfits([]);
+      }
+    } catch (err) {
+      console.error('Generate Outfit error:', err);
+      setOutfitError('An error occurred during outfit generation. Please try again.');
+      setGeneratedOutfits([]);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return '';
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -325,6 +386,52 @@ export const ImageMemorySystem = () => {
         )}
       </div>
 
+      {/* 👕 Outfit Generation Control Bar */}
+      {selectedItems.size > 0 && (
+        <div className="outfit-control-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#1a1f2c', padding: '15px 20px', borderRadius: '12px', margin: '20px 0', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+          <div className="selected-count" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#fff', fontWeight: '500' }}>
+            <Check size={18} color="#4ade80" />
+            <span>{selectedItems.size} {selectedItems.size === 1 ? 'item' : 'items'} selected</span>
+          </div>
+          
+          <div className="outfit-options" style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+            <select 
+              value={outfitOccasion} 
+              onChange={(e) => setOutfitOccasion(e.target.value)}
+              style={{ padding: '8px 12px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.05)', color: '#fff', border: '1px solid rgba(255, 255, 255, 0.1)' }}
+            >
+              <option value="Casual" style={{color: '#000'}}>Casual</option>
+              <option value="Smart Casual" style={{color: '#000'}}>Smart Casual</option>
+              <option value="Formal" style={{color: '#000'}}>Formal</option>
+              <option value="Party" style={{color: '#000'}}>Party</option>
+              <option value="Traditional" style={{color: '#000'}}>Traditional</option>
+            </select>
+            
+            <select 
+              value={outfitStyle} 
+              onChange={(e) => setOutfitStyle(e.target.value)}
+              style={{ padding: '8px 12px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.05)', color: '#fff', border: '1px solid rgba(255, 255, 255, 0.1)' }}
+            >
+              <option value="Everyday" style={{color: '#000'}}>Everyday</option>
+              <option value="Elegant" style={{color: '#000'}}>Elegant</option>
+              <option value="Edgy" style={{color: '#000'}}>Edgy</option>
+              <option value="Minimalist" style={{color: '#000'}}>Minimalist</option>
+              <option value="Trendy" style={{color: '#000'}}>Trendy</option>
+            </select>
+            
+            <button 
+              className="generate-outfit-btn" 
+              onClick={handleGenerateOutfit}
+              disabled={isGenerating}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'linear-gradient(135deg, #6366f1, #a855f7)', color: 'white', padding: '10px 20px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
+            >
+              <Sparkles size={16} />
+              <span>{isGenerating ? 'Generating...' : 'Generate Outfit'}</span>
+            </button>
+          </div>
+        </div>
+      )}
+
 
       {/* 🖼️ Memory Gallery Grid */}
       <div className="memory-gallery-section">
@@ -336,11 +443,16 @@ export const ImageMemorySystem = () => {
         ) : images.length > 0 ? (
           <div className="memory-grid">
             {images.map((img) => (
-              <div key={img.id} className="memory-card">
-                <div className="memory-image-box" onClick={() => setActiveImage(img)}>
+              <div key={img.id} className={`memory-card ${selectedItems.has(img.id) ? 'selected' : ''}`} onClick={() => toggleItemSelection(img.id)} style={selectedItems.has(img.id) ? { border: '2px solid #a855f7', transform: 'scale(0.98)' } : {}}>
+                <div className="memory-image-box">
                   <img src={img.url} alt={img.description || 'Memory'} loading="lazy" />
+                  {selectedItems.has(img.id) && (
+                    <div style={{ position: 'absolute', top: '10px', right: '10px', background: '#a855f7', borderRadius: '50%', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Check size={16} color="white" />
+                    </div>
+                  )}
                   <div className="image-hover-overlay">
-                    <button className="overlay-btn view" title="View Fullscreen">
+                    <button className="overlay-btn view" title="View Fullscreen" onClick={(e) => { e.stopPropagation(); setActiveImage(img); }}>
                       <Eye size={18} />
                     </button>
                     <button
@@ -594,7 +706,74 @@ export const ImageMemorySystem = () => {
             </div>
           </div>
         </div>
+      {/* 👗 Outfit Results Modal */}
+      {showOutfitModal && (
+        <div className="modal-overlay" onClick={() => setShowOutfitModal(false)}>
+          <div className="outfit-modal-card" onClick={(e) => e.stopPropagation()} style={{ background: '#111827', padding: '30px', borderRadius: '16px', maxWidth: '800px', width: '90%', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div className="modal-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '15px' }}>
+              <h3 style={{ color: '#fff', fontSize: '1.5rem', margin: 0 }}>Generated Outfits</h3>
+              <button
+                className="modal-close"
+                onClick={() => setShowOutfitModal(false)}
+                style={{ background: 'transparent', border: 'none', color: '#aaa', cursor: 'pointer' }}
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="outfit-modal-body">
+              {isGenerating ? (
+                <div className="loading-state" style={{ textAlign: 'center', padding: '40px 0' }}>
+                  <div className="spinner-large" style={{ margin: '0 auto 20px' }}></div>
+                  <p style={{ color: '#aaa' }}>Curating the perfect outfits for you...</p>
+                </div>
+              ) : outfitError ? (
+                <div className="error-alert" style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', padding: '15px', borderRadius: '8px' }}>
+                  <AlertCircle size={20} />
+                  <span>{outfitError}</span>
+                </div>
+              ) : generatedOutfits.length > 0 ? (
+                <div className="outfits-list" style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
+                  {generatedOutfits.map((outfit, idx) => (
+                    <div key={idx} className="outfit-result-card" style={{ background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px', padding: '20px' }}>
+                      <div className="outfit-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                        <h4 style={{ color: '#fff', margin: 0, fontSize: '1.2rem' }}>Outfit {idx + 1}</h4>
+                        <div className="outfit-badges" style={{ display: 'flex', gap: '10px' }}>
+                          <span className="badge occasion" style={{ background: 'rgba(99, 102, 241, 0.2)', color: '#818cf8', padding: '4px 10px', borderRadius: '20px', fontSize: '0.85rem' }}>{outfit.occasion}</span>
+                          <span className="badge style" style={{ background: 'rgba(168, 85, 247, 0.2)', color: '#c084fc', padding: '4px 10px', borderRadius: '20px', fontSize: '0.85rem' }}>{outfit.style}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="outfit-items-row" style={{ display: 'flex', gap: '15px', overflowX: 'auto', paddingBottom: '10px' }}>
+                        {outfit.items.map((item, itemIdx) => (
+                          <div key={itemIdx} className="outfit-item-img" style={{ flex: '0 0 150px', height: '200px', borderRadius: '8px', overflow: 'hidden' }}>
+                            <img src={item.url} alt={`Item ${itemIdx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="outfit-reason" style={{ marginTop: '15px', padding: '15px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
+                        <strong style={{ color: '#ccc', display: 'block', marginBottom: '5px' }}>Why it works:</strong>
+                        <p style={{ color: '#aaa', margin: 0, lineHeight: 1.5 }}>{outfit.reason}</p>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  <div className="modal-footer-actions" style={{ display: 'flex', justifyContent: 'flex-end', gap: '15px', marginTop: '20px' }}>
+                    <button className="btn-cancel" onClick={() => setShowOutfitModal(false)} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer' }}>
+                      Close
+                    </button>
+                    <button className="btn-upload" onClick={() => { setShowOutfitModal(false); setSelectedItems(new Set()); }} style={{ background: 'linear-gradient(135deg, #6366f1, #a855f7)', border: 'none', color: '#fff', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
+                      Try Another Combination
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </div>
       )}
+
     </div>
   );
 };

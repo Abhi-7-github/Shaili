@@ -9,6 +9,7 @@ const {
   getUserImages,
   deleteImage,
   trainModelController,
+  generateOutfitFromWardrobe,
 } = require('../controllers/imageController');
 
 // Multer memory storage configuration for file upload
@@ -44,5 +45,6 @@ router.post('/train-model', trainModelController);
 router.get('/search', searchImages);
 router.get('/', getUserImages);
 router.delete('/:id', deleteImage);
+router.post('/outfits/from-wardrobe', generateOutfitFromWardrobe);
 
 module.exports = router;

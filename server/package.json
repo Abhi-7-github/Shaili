@@ -6,13 +6,16 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "train-model": "node scripts/trainModel.js"
+    "train-model": "node scripts/trainModel.js",
+    "import:memories": "node scripts/importMemoryVault.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@google/genai": "^2.22.0",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.11.0",
     "cors": "^2.8.6",
@@ -22,7 +25,6 @@
     "mongodb-memory-server": "^11.2.0",
     "mongoose": "^9.9.5",
     "multer": "^2.3.0",
-    "nodemon": "^3.1.14",
-    "openai": "^7.10.0"
+    "nodemon": "^3.1.14"
   }
 }
