@@ -17,12 +17,13 @@ const searchUserImages = async (userId, parsedCriteria, rawQuery = '') => {
   // Base Query: Strictly scoped to authenticated userId
   const baseQuery = { userId };
 
-  // If no specific categories or keywords detected, search raw query text across description, tags, categories
-  let searchConditions = [];
-
+  // If specific categories are detected, ONLY search within those categories
   if (categories.length > 0) {
-    searchConditions.push({ categories: { $in: categories } });
+    baseQuery.categories = { $in: categories };
   }
+
+  // Keyword search conditions across tags, description, etc.
+  let searchConditions = [];
 
   keywords.forEach((kw) => {
     const regex = new RegExp(kw, 'i');

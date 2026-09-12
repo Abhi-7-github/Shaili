@@ -1,12 +1,12 @@
-const { OpenAI } = require('openai');
+const { GoogleGenAI } = require('@google/genai');
 const { VALID_CATEGORIES } = require('./imageAnalysisService');
 
-let openaiClient = null;
-if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your_openai_api_key_here') {
+let aiClient = null;
+if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here') {
   try {
-    openaiClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    aiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   } catch (err) {
-    console.warn('OpenAI client initialization failed, falling back to local ML keyword tokenizer:', err.message);
+    console.warn('Gemini client initialization failed, falling back to local ML keyword tokenizer:', err.message);
   }
 }
 
@@ -79,26 +79,30 @@ const parseQueryLocal = (queryString = '') => {
 };
 
 /**
- * Uses OpenAI GPT model to analyze user query and extract keywords/categories with ML fallback
+ * Uses Gemini model to analyze user query and extract keywords/categories with ML fallback
  */
 const parseQuery = async (queryString = '') => {
   if (!queryString || typeof queryString !== 'string') {
     return { categories: [], keywords: [] };
   }
 
-  if (openaiClient || (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your_openai_api_key_here')) {
+  if (aiClient || (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here')) {
     try {
-      const client = openaiClient || new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-      const prompt = `Analyze this user query for an image memory retrieval system: "${queryString}". Extract key categories and keywords for image search. Return JSON ONLY in this format: {"categories": ["cat1"], "keywords": ["kw1"]}`;
+      const client = aiClient || new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const prompt = `Analyze this user query for an image memory retrieval system: "${queryString}". Extract key categories and keywords for image search. 
+      IMPORTANT: The ONLY valid categories are: ${VALID_CATEGORIES.join(', ')}. Do not invent any other categories. If no valid category applies, leave it empty.
+      Return JSON ONLY in this format: {"categories": ["cat1"], "keywords": ["kw1"]}`;
 
-      const response = await client.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        response_format: { type: 'json_object' },
-        temperature: 0.2,
+      const response = await client.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: prompt,
+        config: {
+          responseMimeType: "application/json",
+          temperature: 0.2
+        }
       });
 
-      const parsed = JSON.parse(response.choices[0].message.content);
+      const parsed = JSON.parse(response.text);
       if (parsed && Array.isArray(parsed.keywords)) {
         return {
           categories: parsed.categories || [],
@@ -106,7 +110,7 @@ const parseQuery = async (queryString = '') => {
         };
       }
     } catch (err) {
-      console.warn('OpenAI parseQuery call failed, using local NLP fallback:', err.message);
+      console.warn('Gemini parseQuery call failed, using local NLP fallback:', err.message);
     }
   }
 

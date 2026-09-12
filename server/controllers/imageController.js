@@ -273,11 +273,128 @@ const trainModelController = async (req, res) => {
   }
 };
 
+// @desc    Generate outfit combinations from selected wardrobe items
+// @route   POST /api/images/outfits/from-wardrobe
+// @access  Private
+const generateOutfitFromWardrobe = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { itemIds, occasion, style } = req.body;
+
+    if (!itemIds || !Array.isArray(itemIds) || itemIds.length === 0) {
+      return res.status(400).json({ success: false, message: 'Please select at least one wardrobe item.' });
+    }
+
+    // Fetch items strictly scoped to the user
+    const items = await Image.find({ _id: { $in: itemIds }, userId }).lean();
+
+    if (items.length === 0) {
+      return res.status(404).json({ success: false, message: 'No valid wardrobe items found or you do not have permission.' });
+    }
+
+    // Deterministic categorization based on tags and categories
+    const categorizeItem = (item) => {
+      const text = [...(item.categories || []), ...(item.tags || [])].join(' ').toLowerCase();
+      if (text.includes('shirt') || text.includes('t-shirt') || text.includes('top') || text.includes('kurta') || text.includes('sweater') || text.includes('jacket') || text.includes('blouse')) return 'top';
+      if (text.includes('pant') || text.includes('jeans') || text.includes('trouser') || text.includes('shorts') || text.includes('skirt') || text.includes('bottom') || text.includes('legging')) return 'bottom';
+      if (text.includes('shoe') || text.includes('sneaker') || text.includes('boot') || text.includes('heel') || text.includes('sandal') || text.includes('footwear') || text.includes('flat')) return 'footwear';
+      if (text.includes('dress') || text.includes('saree') || text.includes('lehenga') || text.includes('suit') || text.includes('gown')) return 'dress';
+      return 'accessory';
+    };
+
+    const categorized = { top: [], bottom: [], footwear: [], dress: [], accessory: [] };
+    items.forEach(item => {
+      const cat = categorizeItem(item);
+      categorized[cat].push({
+        id: item._id,
+        url: item.cloudinaryUrl,
+        categories: item.categories,
+        tags: item.tags
+      });
+    });
+
+    const combinations = [];
+
+    // Combination 1: Top + Bottom (+ Footwear if available)
+    if (categorized.top.length > 0 && categorized.bottom.length > 0) {
+      const outfit = [categorized.top[0], categorized.bottom[0]];
+      if (categorized.footwear.length > 0) outfit.push(categorized.footwear[0]);
+      combinations.push({
+        items: outfit,
+        occasion: occasion || 'Casual',
+        style: style || 'Smart Casual',
+        reason: 'These pieces naturally complement each other for a balanced, everyday look.'
+      });
+    }
+
+    // Combination 2: Dress (+ Footwear if available)
+    if (categorized.dress.length > 0) {
+      const outfit = [categorized.dress[0]];
+      if (categorized.footwear.length > 0) outfit.push(categorized.footwear[0]);
+      combinations.push({
+        items: outfit,
+        occasion: occasion || 'Formal',
+        style: style || 'Elegant',
+        reason: 'This one-piece look is effortlessly put together and ready for any occasion.'
+      });
+    }
+
+    // Combination 3: Alternative Top + Bottom
+    if (combinations.length < 3 && categorized.top.length > 1 && categorized.bottom.length > 1) {
+      const outfit = [categorized.top[1], categorized.bottom[1]];
+      if (categorized.footwear.length > 1) outfit.push(categorized.footwear[1]);
+      else if (categorized.footwear.length > 0) outfit.push(categorized.footwear[0]);
+      
+      combinations.push({
+        items: outfit,
+        occasion: occasion || 'Semi-formal',
+        style: style || 'Modern',
+        reason: 'An alternative pairing from your selected items that offers a different silhouette.'
+      });
+    }
+    
+    // Combination 4: Top + Accessory
+    if (combinations.length < 3 && categorized.top.length > 0 && categorized.accessory.length > 0) {
+      const outfit = [categorized.top[0], categorized.accessory[0]];
+      if (categorized.bottom.length > 0) outfit.push(categorized.bottom[0]);
+      
+      combinations.push({
+        items: outfit,
+        occasion: occasion || 'Casual',
+        style: style || 'Detailed',
+        reason: 'The accessory adds a thoughtful touch to highlight the upper wear.'
+      });
+    }
+
+    // Fallback if no specific combinations could be made (e.g. only 1 item selected, or all tops)
+    if (combinations.length === 0) {
+      combinations.push({
+        items: items.map(item => ({ id: item._id, url: item.cloudinaryUrl, categories: item.categories, tags: item.tags })),
+        occasion: occasion || 'Any',
+        style: style || 'Your Style',
+        reason: 'Here is what you selected. We recommend adding a wider variety of items (tops, bottoms, footwear) to generate complete outfits.'
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      outfits: combinations.slice(0, 3)
+    });
+  } catch (error) {
+    console.error('Generate Outfit Controller Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || 'Server error generating outfit'
+    });
+  }
+};
+
 module.exports = {
   uploadImage,
   searchImages,
   getUserImages,
   deleteImage,
   trainModelController,
+  generateOutfitFromWardrobe,
 };
 
