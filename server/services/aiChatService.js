@@ -2,9 +2,10 @@ const { GoogleGenAI } = require('@google/genai');
 const Image = require('../models/Image');
 
 let aiClient = null;
-if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here') {
+const geminiApiKey = process.env.GEMINI_API_KEY || process.env.AI_API_KEY;
+if (geminiApiKey && geminiApiKey !== 'your_gemini_api_key_here' && geminiApiKey !== 'your_ai_api_key_here') {
   try {
-    aiClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    aiClient = new GoogleGenAI({ apiKey: geminiApiKey });
   } catch (err) {
     console.warn('Gemini client initialization failed in aiChatService:', err.message);
   }
@@ -81,7 +82,7 @@ You MUST output your response as a JSON object strictly matching this schema:
 
   try {
     const chat = client.chats.create({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-2.0-flash',
       config: {
         systemInstruction: systemPrompt,
         temperature: 0.3,

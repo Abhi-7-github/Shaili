@@ -234,6 +234,100 @@
 
 
 /* =========================================================
+   PROFILE BUTTON
+   ========================================================= */
+
+.shaili-navbar-profile {
+  height: 34px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 0 14px 0 4px;
+
+  border: 1px solid rgba(245, 218, 191, 0.32);
+
+  border-radius: 17px;
+
+  background: rgba(255, 255, 255, 0.05);
+
+  color: #FAF4ED;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.shaili-navbar-profile:hover {
+  background: rgba(245, 218, 191, 0.12);
+
+  border-color: rgba(245, 218, 191, 0.55);
+
+  transform: translateY(-1px);
+}
+
+
+.shaili-profile-avatar-box {
+  width: 26px;
+
+  height: 26px;
+
+  border-radius: 50%;
+
+  background: #6C151E;
+
+  color: #F5DABF;
+
+  font-weight: 700;
+
+  font-size: 11px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+}
+
+
+.shaili-profile-icon {
+  width: 14px;
+
+  height: 14px;
+
+  color: #F5DABF;
+}
+
+
+.shaili-profile-name {
+  color: #FAF4ED;
+
+  letter-spacing: 0.02em;
+}
+
+
+
+/* =========================================================
    REPLAY BUTTON
    ========================================================= */
 

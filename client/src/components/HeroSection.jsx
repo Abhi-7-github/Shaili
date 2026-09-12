@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import fashionPortraitImg from '../assets/shaili_fashion_portrait.jpg';
+import fashionPortraitImg from '../assets/shaili_fashion_portrait.png';
 import heroBgImg from '../assets/shaili_hero_bg.png';
 
 export const HeroSection = () => {
@@ -54,11 +54,11 @@ export const HeroSection = () => {
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           className="lg:col-span-6 relative flex items-center justify-center my-auto order-2 lg:order-1"
         >
-          <div className="relative rounded-[2.5rem] overflow-hidden border border-[#6C151E]/25 shadow-2xl bg-[#0F3D3A] aspect-[4/3] w-full max-w-[540px] max-h-[500px] mx-auto">
+          <div className="relative rounded-[2.5rem] overflow-hidden border border-[#6C151E]/25 shadow-2xl bg-[#0F3D3A] w-full max-w-[540px] mx-auto flex items-center justify-center p-1">
             <img
               src={fashionPortraitImg}
               alt="Shaili Luxury Indian Fashion Editorial"
-              className="w-full h-full object-cover object-center"
+              className="w-full h-auto object-contain rounded-[2rem]"
             />
           </div>
         </motion.div>

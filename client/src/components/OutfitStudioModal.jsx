@@ -37,7 +37,7 @@ export const OutfitStudioModal = ({ isOpen, onClose }) => {
           initial={{ opacity: 0, scale: 0.92, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.92, y: 20 }}
-          transition={{ type: "spring", stiffness: 300, damping: 25 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           className="relative z-10 w-full max-w-3xl glass-cream rounded-[2.5rem] p-6 sm:p-8 bg-[#F7EFE7] border border-[#6C151E]/30 shadow-2xl overflow-hidden text-[#1C1A18]"
         >
           {/* Top Header Row */}
