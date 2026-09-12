@@ -1,0 +1,661 @@
+/* =========================================================
+   SHAILI FOOTER
+   ========================================================= */
+
+.shaili-footer {
+  position: relative;
+
+  width: 100%;
+
+  margin-top: 80px;
+
+  padding: 0 0 32px;
+
+  background: #0F3D3A;
+
+  color: #FAF4ED;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   TOP EDITORIAL DIVIDER
+   ========================================================= */
+
+.shaili-footer-divider {
+  width: min(1320px, calc(100% - 80px));
+
+  height: 1px;
+
+  margin: 0 auto 24px;
+
+  background: rgba(108, 21, 30, 0.55);
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CENTERED FOOTER PANEL
+   ========================================================= */
+
+.shaili-footer-container {
+  width: min(1320px, calc(100% - 80px));
+
+  margin: 0 auto;
+
+  border: 1px solid rgba(245, 218, 191, 0.32);
+
+  border-radius: 6px;
+
+  background: #0F3D3A;
+
+  overflow: hidden;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
+
+.shaili-footer-content {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.25fr)
+    minmax(180px, 0.75fr)
+    minmax(0, 1.25fr);
+
+  column-gap: 70px;
+
+  align-items: start;
+
+  padding: 28px 42px 26px;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.shaili-footer-brand {
+  min-width: 0;
+}
+
+
+.shaili-footer-logo {
+  display: flex;
+
+  align-items: baseline;
+
+  width: fit-content;
+
+  margin: 0;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 30px;
+
+  line-height: 1;
+
+  letter-spacing: -1.5px;
+
+  color: #FAF4ED;
+}
+
+
+.shaili-logo-ai {
+  color: #6C151E;
+}
+
+
+.shaili-footer-tagline {
+  margin: 9px 0 0;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 12px;
+
+  font-style: italic;
+
+  line-height: 1.4;
+
+  color: #F5DABF;
+}
+
+
+.shaili-footer-description {
+  max-width: 410px;
+
+  margin: 10px 0 0;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  font-size: 12px;
+
+  line-height: 1.65;
+
+  color: rgba(250, 244, 237, 0.72);
+}
+
+
+/* =========================================================
+   HEADINGS
+   ========================================================= */
+
+.shaili-footer-heading {
+  margin: 0;
+
+  font-family:
+    "Courier New",
+    Courier,
+    monospace;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  line-height: 1.2;
+
+  letter-spacing: 0.16em;
+
+  text-transform: uppercase;
+
+  color: #F5DABF;
+}
+
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+.shaili-footer-navigation {
+  min-width: 0;
+}
+
+
+.shaili-footer-links {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  gap: 6px;
+
+  margin: 13px 0 0;
+
+  padding: 0;
+
+  list-style: none;
+}
+
+
+.shaili-footer-links li {
+  margin: 0;
+
+  padding: 0;
+}
+
+
+.shaili-footer-link {
+  position: relative;
+
+  display: inline-block;
+
+  width: fit-content;
+
+  padding: 0;
+
+  border: none;
+
+  outline: none;
+
+  background: transparent;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  font-size: 13px;
+
+  line-height: 1.35;
+
+  text-align: left;
+
+  color: rgba(250, 244, 237, 0.78);
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.shaili-footer-link:hover {
+  color: #F5DABF;
+
+  transform: translateX(2px);
+}
+
+
+.shaili-footer-link.active {
+  color: #F5DABF;
+
+  font-weight: 600;
+}
+
+
+.shaili-footer-link.active::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+
+  bottom: -3px;
+
+  width: 100%;
+
+  height: 1px;
+
+  background: #6C151E;
+}
+
+
+/* =========================================================
+   SHAILI EDIT
+   ========================================================= */
+
+.shaili-footer-newsletter {
+  min-width: 0;
+}
+
+
+.shaili-footer-newsletter-text {
+  max-width: 480px;
+
+  margin: 12px 0 0;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  font-size: 12px;
+
+  line-height: 1.6;
+
+  color: rgba(250, 244, 237, 0.72);
+}
+
+
+/* =========================================================
+   NEWSLETTER FORM
+   ========================================================= */
+
+.shaili-footer-form {
+  display: flex;
+
+  width: 100%;
+
+  max-width: 500px;
+
+  margin-top: 15px;
+
+  gap: 8px;
+
+  align-items: stretch;
+
+  box-sizing: border-box;
+}
+
+
+.shaili-footer-input {
+  min-width: 0;
+
+  flex: 1;
+
+  height: 38px;
+
+  padding: 0 12px;
+
+  border: 1px solid rgba(245, 218, 191, 0.28);
+
+  border-radius: 4px;
+
+  outline: none;
+
+  background: #0A2E2C;
+
+  color: #FAF4ED;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  font-size: 12px;
+
+  box-sizing: border-box;
+
+  transition: border-color 0.2s ease;
+}
+
+
+.shaili-footer-input::placeholder {
+  color: rgba(245, 218, 191, 0.45);
+}
+
+
+.shaili-footer-input:focus {
+  border-color: rgba(245, 218, 191, 0.65);
+}
+
+
+.shaili-footer-subscribe {
+  flex-shrink: 0;
+
+  height: 38px;
+
+  padding: 0 17px;
+
+  border: 1px solid rgba(245, 218, 191, 0.28);
+
+  border-radius: 4px;
+
+  outline: none;
+
+  background: #6C151E;
+
+  color: #FAF4ED;
+
+  font-family:
+    "Courier New",
+    Courier,
+    monospace;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.06em;
+
+  text-transform: uppercase;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+
+.shaili-footer-subscribe:hover {
+  background: #541017;
+
+  border-color: rgba(245, 218, 191, 0.45);
+}
+
+
+/* =========================================================
+   BOTTOM BAR
+   ========================================================= */
+
+.shaili-footer-bottom {
+  min-height: 48px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 24px;
+
+  padding: 0 42px;
+
+  border-top: 1px solid rgba(245, 218, 191, 0.18);
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   COPYRIGHT
+   ========================================================= */
+
+.shaili-footer-copyright {
+  margin: 0;
+
+  flex-shrink: 0;
+
+  font-family:
+    "Courier New",
+    Courier,
+    monospace;
+
+  font-size: 10px;
+
+  line-height: 1.3;
+
+  color: rgba(250, 244, 237, 0.68);
+
+  white-space: nowrap;
+}
+
+
+.shaili-footer-copyright span {
+  color: #6C151E;
+}
+
+
+/* =========================================================
+   LEGAL LINKS
+   ========================================================= */
+
+.shaili-footer-legal {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  font-size: 10px;
+
+  line-height: 1.3;
+
+  color: rgba(245, 218, 191, 0.65);
+
+  white-space: nowrap;
+}
+
+
+.shaili-footer-legal button {
+  padding: 0;
+
+  border: none;
+
+  outline: none;
+
+  background: transparent;
+
+  color: inherit;
+
+  font-family: inherit;
+
+  font-size: inherit;
+
+  cursor: pointer;
+
+  transition: color 0.2s ease;
+}
+
+
+.shaili-footer-legal button:hover {
+  color: #FAF4ED;
+}
+
+
+.shaili-footer-legal span {
+  color: #6C151E;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+  .shaili-footer {
+    margin-top: 60px;
+  }
+
+
+  .shaili-footer-divider {
+    width: calc(100% - 48px);
+  }
+
+
+  .shaili-footer-container {
+    width: calc(100% - 48px);
+  }
+
+
+  .shaili-footer-content {
+    grid-template-columns: 1fr 1fr;
+
+    column-gap: 45px;
+
+    row-gap: 30px;
+
+    padding: 28px 32px;
+  }
+
+
+  .shaili-footer-newsletter {
+    grid-column: 1 / -1;
+  }
+
+
+  .shaili-footer-bottom {
+    padding: 0 32px;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 640px) {
+
+  .shaili-footer {
+    margin-top: 45px;
+
+    padding-bottom: 20px;
+  }
+
+
+  .shaili-footer-divider {
+    width: calc(100% - 32px);
+
+    margin-bottom: 18px;
+  }
+
+
+  .shaili-footer-container {
+    width: calc(100% - 24px);
+
+    border-radius: 5px;
+  }
+
+
+  .shaili-footer-content {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 26px;
+
+    padding: 25px 20px;
+  }
+
+
+  .shaili-footer-description {
+    max-width: 100%;
+  }
+
+
+  .shaili-footer-newsletter-text {
+    max-width: 100%;
+  }
+
+
+  .shaili-footer-form {
+    flex-direction: column;
+
+    max-width: 100%;
+  }
+
+
+  .shaili-footer-input,
+  .shaili-footer-subscribe {
+    width: 100%;
+  }
+
+
+  .shaili-footer-bottom {
+    min-height: auto;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    padding: 16px 20px;
+  }
+
+
+  .shaili-footer-copyright {
+    white-space: normal;
+  }
+
+
+  .shaili-footer-legal {
+    justify-content: flex-start;
+
+    flex-wrap: wrap;
+
+    white-space: normal;
+  }
+
+}

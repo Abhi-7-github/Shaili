@@ -1,47 +1,31 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import "tailwindcss";
 
 :root {
-  --font-headline: 'Playfair Display', Georgia, serif;
+  --font-headline: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+  --font-editorial: 'Cormorant Garamond', Georgia, serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   
-  /* SHAILI Fashion Platform Color System */
-  --primary: #283845;
-  --primary-hover: #1b2731;
-  --primary-light: rgba(40, 56, 69, 0.08);
+  /* SHAILI Exact Palette System */
+  --shaili-bg: #FAF4ED;
+  --shaili-bordeaux: #6C151E;
+  --shaili-green: #0F3D3A;
+  --shaili-cream: #F5DABF;
+  --shaili-charcoal: #171513;
+  --shaili-muted: #81766D;
   
-  --secondary: #FFA649;
-  --secondary-hover: #f59533;
-  --secondary-light: rgba(255, 166, 73, 0.15);
+  --primary: #6C151E;
+  --primary-hover: #541017;
+  --secondary: #0F3D3A;
+  --tertiary: #F5DABF;
   
-  --tertiary: #47321E;
-  --tertiary-hover: #352414;
-  --tertiary-light: rgba(71, 50, 30, 0.08);
-  
-  --neutral-bg: #F9FAFB;
+  --neutral-bg: #FAF4ED;
   --neutral-card: #FFFFFF;
-  --neutral-surface: #F0F2F5;
-  --border-color: #E2E8F0;
+  --border-color: rgba(108, 21, 30, 0.15);
   
-  --text-main: #283845;
-  --text-muted: #526475;
-  --text-subtle: #8A9BA8;
-  --text-inverse: #FFFFFF;
-  
-  --error: #DC2626;
-  --error-bg: #FEE2E2;
-  --error-border: #FCA5A5;
-  
-  --success: #16A34A;
-  --success-bg: #DCFCE7;
-  
-  --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --radius-full: 9999px;
-  
-  --shadow-sm: 0 2px 8px rgba(40, 56, 69, 0.04);
-  --shadow-md: 0 10px 30px rgba(40, 56, 69, 0.08);
-  --shadow-lg: 0 20px 45px rgba(40, 56, 69, 0.12);
+  --text-main: #171513;
+  --text-muted: #81766D;
+  --text-subtle: #81766D;
 }
 
 * {
@@ -57,6 +41,45 @@ body {
   min-height: 100vh;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Subtle Fabric & Paper Texture */
+.bg-grain {
+  background-image: radial-gradient(rgba(23, 21, 19, 0.035) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.font-editorial {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+.font-headline {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.glass-stat-block {
+  background: rgba(245, 218, 191, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(108, 21, 30, 0.12);
+}
+
+.glass-bordeaux {
+  background: rgba(108, 21, 30, 0.94);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(245, 218, 191, 0.25);
+}
+
+.glass-cream {
+  background: rgba(245, 218, 191, 0.92);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(108, 21, 30, 0.18);
+}
+
+/* Signature AI Glow */
+.ai-bordeaux-glow {
+  text-shadow: 0 0 16px rgba(108, 21, 30, 0.3);
 }
 
 h1, h2, h3, h4 {

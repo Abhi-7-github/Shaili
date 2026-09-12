@@ -1,0 +1,727 @@
+/* =========================================================
+   SHAILI NAVBAR
+   Premium Editorial Navigation
+   ========================================================= */
+
+
+/* =========================================================
+   OUTER NAVBAR
+   ========================================================= */
+
+.shaili-navbar {
+  position: sticky;
+
+  top: 0;
+
+  z-index: 1000;
+
+  width: 100%;
+
+  padding: 10px 0;
+
+  background: transparent;
+
+  box-sizing: border-box;
+
+  user-select: none;
+}
+
+
+/* =========================================================
+   MAIN NAVBAR CONTAINER
+   ========================================================= */
+
+.shaili-navbar-container {
+  width: calc(100% - 48px);
+
+  max-width: 1400px;
+
+  height: 56px;
+
+  margin: 0 auto;
+
+  display: grid;
+
+  grid-template-columns:
+    200px
+    minmax(0, 1fr)
+    260px;
+
+  align-items: center;
+
+  gap: 20px;
+
+  padding: 0 8px 0 20px;
+
+  background: rgba(15, 61, 58, 0.97);
+
+  border: 1px solid rgba(245, 218, 191, 0.32);
+
+  border-radius: 8px;
+
+  box-sizing: border-box;
+
+  box-shadow:
+    0 8px 25px rgba(15, 61, 58, 0.12);
+
+  backdrop-filter: blur(12px);
+
+  -webkit-backdrop-filter: blur(12px);
+}
+
+
+/* =========================================================
+   LOGO
+   ========================================================= */
+
+.shaili-navbar-logo {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-self: start;
+
+  width: fit-content;
+
+  margin: 0;
+
+  padding: 0;
+
+  border: none;
+
+  outline: none;
+
+  background: transparent;
+
+  cursor: pointer;
+}
+
+
+.shaili-navbar-logo-ai {
+  position: relative;
+
+  color: #6C151E;
+
+  font-weight: 500;
+}
+
+
+/* Small burgundy underline beneath AI */
+.shaili-navbar-logo-ai::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+
+  right: 0;
+
+  bottom: -2px;
+
+  height: 2px;
+
+  border-radius: 2px;
+
+  background: #6C151E;
+}
+
+
+/* =========================================================
+   DESKTOP NAVIGATION
+   ========================================================= */
+
+.shaili-navbar-navigation {
+  height: 100%;
+
+  min-width: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 2px;
+}
+
+
+.shaili-navbar-link {
+  position: relative;
+
+  height: 100%;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 0 13px;
+
+  border: none;
+
+  outline: none;
+
+  background: transparent;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  font-size: 12px;
+
+  font-weight: 500;
+
+  line-height: 1;
+
+  color: rgba(250, 244, 237, 0.62);
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease;
+}
+
+
+.shaili-navbar-link:hover {
+  color: #F5DABF;
+}
+
+
+.shaili-navbar-link.active {
+  color: #FAF4ED;
+
+  font-weight: 600;
+}
+
+
+/* Active line */
+.shaili-navbar-active-line {
+  position: absolute;
+
+  left: 13px;
+
+  right: 13px;
+
+  bottom: 8px;
+
+  height: 2px;
+
+  border-radius: 2px;
+
+  background: #F5DABF;
+}
+
+
+/* =========================================================
+   RIGHT ACTIONS
+   ========================================================= */
+
+.shaili-navbar-actions {
+  min-width: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-end;
+
+  gap: 8px;
+}
+
+
+/* =========================================================
+   REPLAY BUTTON
+   ========================================================= */
+
+.shaili-navbar-replay {
+  height: 32px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 5px;
+
+  padding: 0 11px;
+
+  border: 1px solid rgba(245, 218, 191, 0.30);
+
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.04);
+
+  color: #F5DABF;
+
+  font-family:
+    "Courier New",
+    Courier,
+    monospace;
+
+  font-size: 9px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.08em;
+
+  text-transform: uppercase;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+
+.shaili-navbar-replay:hover {
+  background: rgba(245, 218, 191, 0.10);
+
+  border-color: rgba(245, 218, 191, 0.55);
+}
+
+
+.shaili-replay-icon {
+  width: 13px;
+
+  height: 13px;
+
+  stroke-width: 1.8;
+}
+
+
+/* =========================================================
+   OUTFIT STUDIO BUTTON
+   ========================================================= */
+
+.shaili-navbar-studio {
+  height: 32px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 0 14px;
+
+  border: 1px solid rgba(245, 218, 191, 0.28);
+
+  border-radius: 16px;
+
+  background: #6C151E;
+
+  color: #FAF4ED;
+
+  font-family:
+    "Courier New",
+    Courier,
+    monospace;
+
+  font-size: 9px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.07em;
+
+  text-transform: uppercase;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.shaili-navbar-studio:hover {
+  background: #541017;
+
+  border-color: rgba(245, 218, 191, 0.48);
+
+  transform: translateY(-1px);
+}
+
+
+.shaili-studio-icon {
+  width: 12px;
+
+  height: 12px;
+
+  color: #F5DABF;
+
+  stroke-width: 2;
+}
+
+
+.shaili-studio-arrow {
+  font-size: 11px;
+
+  color: #F5DABF;
+}
+
+
+/* =========================================================
+   MOBILE MENU BUTTON
+   ========================================================= */
+
+.shaili-navbar-menu {
+  display: none;
+
+  width: 32px;
+
+  height: 32px;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid rgba(245, 218, 191, 0.25);
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.06);
+
+  color: #FAF4ED;
+
+  cursor: pointer;
+}
+
+
+.shaili-navbar-menu svg {
+  width: 16px;
+
+  height: 16px;
+}
+
+
+/* =========================================================
+   MOBILE DRAWER
+   ========================================================= */
+
+.shaili-mobile-wrapper {
+  width: calc(100% - 48px);
+
+  max-width: 1400px;
+
+  margin: 8px auto 0;
+}
+
+
+.shaili-mobile-menu {
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+
+  padding: 10px;
+
+  border: 1px solid rgba(245, 218, 191, 0.30);
+
+  border-radius: 8px;
+
+  background: #0F3D3A;
+
+  box-shadow:
+    0 15px 35px rgba(15, 61, 58, 0.20);
+
+  box-sizing: border-box;
+}
+
+
+.shaili-mobile-link {
+  width: 100%;
+
+  min-height: 42px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  padding: 0 14px;
+
+  border: none;
+
+  border-radius: 5px;
+
+  background: transparent;
+
+  color: rgba(250, 244, 237, 0.72);
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  font-size: 12px;
+
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+
+.shaili-mobile-link:hover {
+  background: rgba(255, 255, 255, 0.05);
+
+  color: #F5DABF;
+}
+
+
+.shaili-mobile-link.active {
+  background: #6C151E;
+
+  color: #FAF4ED;
+}
+
+
+.shaili-mobile-link-left {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+
+.shaili-mobile-link-left svg {
+  width: 15px;
+
+  height: 15px;
+
+  color: #F5DABF;
+}
+
+
+.shaili-mobile-active-dot {
+  width: 6px;
+
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #F5DABF;
+}
+
+
+/* =========================================================
+   MOBILE REPLAY
+   ========================================================= */
+
+.shaili-mobile-replay {
+  min-height: 42px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  margin-top: 4px;
+
+  padding: 0 14px;
+
+  border: 1px solid rgba(245, 218, 191, 0.18);
+
+  border-radius: 5px;
+
+  background: rgba(255, 255, 255, 0.05);
+
+  color: #FAF4ED;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  font-size: 12px;
+
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+
+.shaili-mobile-replay svg {
+  width: 15px;
+
+  height: 15px;
+
+  color: #F5DABF;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+  .shaili-navbar-container {
+    width: calc(100% - 32px);
+
+    grid-template-columns:
+      150px
+      minmax(0, 1fr)
+      230px;
+
+    gap: 10px;
+
+    padding-left: 16px;
+  }
+
+
+  .shaili-navbar-link {
+    padding: 0 8px;
+
+    font-size: 11px;
+  }
+
+
+  .shaili-navbar-active-line {
+    left: 8px;
+
+    right: 8px;
+  }
+
+
+  .shaili-navbar-studio {
+    padding: 0 11px;
+  }
+
+}
+
+
+/* =========================================================
+   TABLET / SMALL DESKTOP
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .shaili-navbar-container {
+    grid-template-columns:
+      150px
+      minmax(0, 1fr)
+      200px;
+  }
+
+
+  .shaili-navbar-navigation {
+    gap: 0;
+  }
+
+
+  .shaili-navbar-link {
+    padding: 0 6px;
+
+    font-size: 10px;
+  }
+
+
+  .shaili-navbar-active-line {
+    left: 6px;
+
+    right: 6px;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+  .shaili-navbar {
+    padding: 8px 0;
+  }
+
+
+  .shaili-navbar-container {
+    width: calc(100% - 24px);
+
+    height: 52px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 8px 0 15px;
+
+    gap: 8px;
+  }
+
+
+  .shaili-navbar-navigation {
+    display: none;
+  }
+
+
+  .shaili-navbar-actions {
+    margin-left: auto;
+  }
+
+
+  .shaili-navbar-menu {
+    display: inline-flex;
+  }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+  .shaili-navbar-container {
+    width: calc(100% - 16px);
+  }
+
+
+  .shaili-navbar-replay {
+    display: none;
+  }
+
+
+  .shaili-navbar-studio {
+    height: 32px;
+
+    padding: 0 12px;
+
+    font-size: 8px;
+  }
+
+
+  .shaili-mobile-wrapper {
+    width: calc(100% - 16px);
+  }
+
+}
