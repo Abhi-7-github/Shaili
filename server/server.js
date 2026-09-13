@@ -1,6 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+
+// Load environment variables immediately
+dotenv.config();
+
 const mongoose = require('mongoose');
 const connectDB = require('./config/db');
 
@@ -16,9 +20,6 @@ const virtualTryOnRoutes = require('./routes/virtualTryOnRoutes');
 
 // Import Error Handler Middleware
 const errorHandler = require('./middleware/errorHandler');
-
-// Load environment variables
-dotenv.config();
 
 // Connect to MongoDB
 connectDB();
@@ -39,6 +40,8 @@ app.use('/api/insights', insightsRoutes);
 app.use('/api/images', imageRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/virtual-tryon', virtualTryOnRoutes);
+app.use('/api/virtual-try-on', virtualTryOnRoutes);
+
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
