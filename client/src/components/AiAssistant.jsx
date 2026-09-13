@@ -291,9 +291,8 @@ export const AiAssistant = () => {
         <button
           type="button"
           onClick={toggleListening}
-          className={`w-12 h-12 rounded-full shadow-xl flex items-center justify-center border-2 border-[#F5DABF] transition-all cursor-pointer ${
-            isListening ? 'bg-[#6C151E] text-white animate-pulse' : 'bg-[#0F3D3A] text-[#FAF4ED] hover:scale-105'
-          }`}
+          className={`w-12 h-12 rounded-full shadow-xl flex items-center justify-center border-2 border-[#F5DABF] transition-all cursor-pointer ${isListening ? 'bg-[#6C151E] text-white animate-pulse' : 'bg-[#0F3D3A] text-[#FAF4ED] hover:scale-105'
+            }`}
           title={isListening ? 'Listening for Voice Commands...' : 'Activate Voice Assistant'}
         >
           {isListening ? <Mic className="w-5 h-5 text-red-200 animate-spin" /> : <Mic className="w-5 h-5 text-[#F5DABF]" />}
@@ -377,11 +376,10 @@ export const AiAssistant = () => {
                     key={l.code}
                     type="button"
                     onClick={() => setLanguage(l.code)}
-                    className={`px-2 py-0.5 rounded-full transition-all cursor-pointer ${
-                      currentLanguage === l.code || (l.code === 'auto' && currentLanguage === 'auto')
+                    className={`px-2 py-0.5 rounded-full transition-all cursor-pointer ${currentLanguage === l.code || (l.code === 'auto' && currentLanguage === 'auto')
                         ? 'bg-[#6C151E] text-white font-bold'
                         : 'bg-white/10 hover:bg-white/20 text-[#FAF4ED]'
-                    }`}
+                      }`}
                   >
                     {l.label}
                   </button>
@@ -404,11 +402,10 @@ export const AiAssistant = () => {
                   className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
                 >
                   <div
-                    className={`max-w-[85%] p-3 rounded-2xl text-xs font-medium leading-relaxed ${
-                      msg.sender === 'user'
+                    className={`max-w-[85%] p-3 rounded-2xl text-xs font-medium leading-relaxed ${msg.sender === 'user'
                         ? 'bg-[#0F3D3A] text-[#FAF4ED] rounded-tr-none'
                         : 'bg-white border border-[#F5DABF] text-[#0A2E2C] rounded-tl-none shadow-xs'
-                    }`}
+                      }`}
                   >
                     <p>{msg.text}</p>
 
@@ -468,9 +465,8 @@ export const AiAssistant = () => {
               <button
                 type="button"
                 onClick={toggleListening}
-                className={`p-2.5 rounded-xl transition-all ${
-                  isListening ? 'bg-[#6C151E] text-white animate-pulse' : 'bg-[#FAF4ED] border border-[#F5DABF] text-[#0F3D3A] hover:bg-[#F5DABF]/30'
-                }`}
+                className={`p-2.5 rounded-xl transition-all ${isListening ? 'bg-[#6C151E] text-white animate-pulse' : 'bg-[#FAF4ED] border border-[#F5DABF] text-[#0F3D3A] hover:bg-[#F5DABF]/30'
+                  }`}
                 title={isListening ? 'Stop Listening' : 'Start Voice Input'}
               >
                 {isListening ? <Mic className="w-4 h-4 text-white" /> : <Mic className="w-4 h-4 text-[#0F3D3A]" />}
