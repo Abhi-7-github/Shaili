@@ -17,14 +17,18 @@ const searchUserImages = async (userId, parsedCriteria, rawQuery = '') => {
   // Base Query: Strictly scoped to authenticated userId
   const baseQuery = { userId };
 
-  // If specific categories are detected, ONLY search within those categories
-  if (categories.length > 0) {
-    baseQuery.categories = { $in: categories };
-  }
-
-  // Keyword search conditions across tags, description, etc.
+  // Keyword & Category search conditions across categories, tags, description, originalName
   let searchConditions = [];
 
+  // 1. Categories regex conditions
+  categories.forEach((cat) => {
+    const regex = new RegExp(cat, 'i');
+    searchConditions.push({ categories: regex });
+    searchConditions.push({ tags: regex });
+    searchConditions.push({ description: regex });
+  });
+
+  // 2. Keyword regex conditions
   keywords.forEach((kw) => {
     const regex = new RegExp(kw, 'i');
     searchConditions.push({ categories: regex });
@@ -33,11 +37,16 @@ const searchUserImages = async (userId, parsedCriteria, rawQuery = '') => {
     searchConditions.push({ originalName: regex });
   });
 
-  if (rawQuery && searchConditions.length === 0) {
-    const rawRegex = new RegExp(rawQuery.replace(/[^a-zA-Z0-9\s]/g, ''), 'i');
-    searchConditions.push({ categories: rawRegex });
-    searchConditions.push({ tags: rawRegex });
-    searchConditions.push({ description: rawRegex });
+  // 3. Raw query fallback search condition
+  if (rawQuery) {
+    const sanitized = rawQuery.replace(/[^a-zA-Z0-9\u0C00-\u0C7F\u0B80-\u0BFF\u0900-\u097F\s]/g, '').trim();
+    if (sanitized) {
+      const rawRegex = new RegExp(sanitized, 'i');
+      searchConditions.push({ categories: rawRegex });
+      searchConditions.push({ tags: rawRegex });
+      searchConditions.push({ description: rawRegex });
+      searchConditions.push({ originalName: rawRegex });
+    }
   }
 
   if (searchConditions.length > 0) {
@@ -48,41 +57,45 @@ const searchUserImages = async (userId, parsedCriteria, rawQuery = '') => {
   const images = await Image.find(baseQuery).lean();
 
   // Relevance Scoring & Ranking System
-  // Rank 1: Exact category match
+  // Rank 1: Category or Filename match
   // Rank 2: Tag match
   // Rank 3: Description match
-  // Rank 4: Partial keyword match
   const scoredImages = images.map((img) => {
     let score = 0;
 
     const imgCategories = (img.categories || []).map((c) => c.toLowerCase());
     const imgTags = (img.tags || []).map((t) => t.toLowerCase());
     const imgDesc = (img.description || '').toLowerCase();
+    const imgName = (img.originalName || '').toLowerCase();
 
-    // Score Category Matches (Highest weight)
+    // Score Category Matches
     categories.forEach((cat) => {
-      if (imgCategories.includes(cat.toLowerCase())) {
+      const catLower = cat.toLowerCase();
+      if (imgCategories.includes(catLower)) {
         score += 50;
+      } else if (imgCategories.some((c) => c.includes(catLower))) {
+        score += 25;
       }
     });
 
-    // Score Keyword & Tag Matches
+    // Score Keyword & Filename Matches
     keywords.forEach((kw) => {
       const kwLower = kw.toLowerCase();
       
-      // Tag match
+      if (imgName.includes(kwLower)) {
+        score += 35;
+      }
+
       if (imgTags.includes(kwLower)) {
         score += 30;
       } else if (imgTags.some((t) => t.includes(kwLower))) {
         score += 15;
       }
 
-      // Category text match
       if (imgCategories.some((c) => c.includes(kwLower))) {
         score += 25;
       }
 
-      // Description text match
       if (imgDesc.includes(kwLower)) {
         score += 20;
       }

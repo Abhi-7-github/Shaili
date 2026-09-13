@@ -24,16 +24,16 @@ const parseQueryLocal = (queryString = '') => {
   const keywordsSet = new Set();
 
   const CONCEPT_DICTIONARY = {
-    wedding: ['wedding', 'marriage', 'bride', 'groom', 'reception', 'engagement', 'ceremony', 'sangeet', 'shaadi'],
-    birthday: ['birthday', 'bday', 'cake', 'candles', 'party'],
-    party: ['party', 'nightout', 'club', 'celebration', 'drinks'],
+    wedding: ['wedding', 'marriage', 'bride', 'groom', 'reception', 'engagement', 'ceremony', 'sangeet', 'shaadi', 'pelli', 'kalyaanam', 'kalyanam', 'திருமணம்', 'கல்யாணம்', 'పెళ్లి', 'వివాహం', 'శాది', 'शादी', 'विवाह'],
+    birthday: ['birthday', 'bday', 'cake', 'candles', 'party', 'పుట్టినరోజు', 'బర్త్‌డే', 'பிறந்தநாள்', 'பர்த்டே', 'जन्मदिन', 'बर्थडे'],
+    party: ['party', 'nightout', 'club', 'celebration', 'drinks', 'పార్టీ', 'பார்ட்டி', 'पार्टी'],
     travel: ['travel', 'trip', 'vacation', 'tour', 'journey', 'sightseeing', 'holiday', 'adventure'],
     beach: ['beach', 'sea', 'ocean', 'waves', 'sunset', 'sand', 'coastal'],
     family: ['family', 'parents', 'mom', 'mother', 'dad', 'father', 'sister', 'brother', 'siblings', 'relatives'],
     friends: ['friends', 'friend', 'besties', 'buddy', 'buddies', 'group', 'hangout', 'meetup', 'outing'],
     college: ['college', 'university', 'campus', 'hostel', 'classmates', 'students', 'seminar', 'hackathon'],
     sports: ['sports', 'cricket', 'football', 'soccer', 'basketball', 'badminton', 'match', 'tournament'],
-    festival: ['festival', 'festive', 'diwali', 'holi', 'christmas', 'eid', 'pongal', 'onam', 'traditional'],
+    festival: ['festival', 'festive', 'diwali', 'holi', 'christmas', 'eid', 'pongal', 'onam', 'traditional', 'పండుగ', 'సంక్రాంతి', 'దీపావళి', 'திருவிழா', 'பொங்கல்', 'தீபாவளி', 'त्योहार', 'दीवाली'],
     fashion: ['fashion', 'outfit', 'dress', 'saree', 'lehenga', 'kurta', 'suit', 'ethnic', 'jewellery'],
     food: ['food', 'restaurant', 'dinner', 'lunch', 'breakfast', 'cafe', 'dessert', 'biryani'],
     nature: ['nature', 'forest', 'mountain', 'hills', 'waterfall', 'river', 'lake', 'scenery', 'landscape'],

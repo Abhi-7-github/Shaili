@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { parseVoiceCommand } from '../services/voiceCommandRouter';
+import { parseVoiceCommand, detectLanguage } from '../services/voiceCommandRouter';
 import { ttsService } from '../services/ttsService';
 
 const VoiceCommandContext = createContext();
@@ -10,7 +10,8 @@ export const VoiceCommandProvider = ({ children }) => {
 
   const [isListening, setIsListening] = useState(false);
   const [isContinuous, setIsContinuous] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState('en-IN');
+  const [currentLanguage, setCurrentLanguage] = useState('auto');
+  const [autoDetectedLang, setAutoDetectedLang] = useState('en');
   const [transcript, setTranscript] = useState('');
   const [voiceFeedback, setVoiceFeedback] = useState('');
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
@@ -18,6 +19,7 @@ export const VoiceCommandProvider = ({ children }) => {
 
   const recognitionRef = useRef(null);
   const sessionFinalSegmentsRef = useRef([]);
+  const latestTranscriptRef = useRef('');
   const lastProcessedTranscriptRef = useRef('');
   const isListeningRef = useRef(false);
   const isStartingRef = useRef(false);
@@ -105,7 +107,7 @@ export const VoiceCommandProvider = ({ children }) => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      const msg = 'Web Speech Recognition API is not supported in this browser.';
+      const msg = 'Web Speech Recognition API is not supported in this browser. Please use Google Chrome or Edge.';
       console.warn('[Voice Command]:', msg);
       setVoiceFeedback(msg);
       return;
@@ -129,11 +131,18 @@ export const VoiceCommandProvider = ({ children }) => {
     recognition.continuous = false;
     recognition.interimResults = true;
     if ('maxAlternatives' in recognition) {
-      recognition.maxAlternatives = 3;
+      recognition.maxAlternatives = 5;
     }
-    recognition.lang = currentLanguage;
+
+    // Auto-detect mode defaults to browser locale for Web Speech API input, then dynamically classifies script
+    if (currentLanguage === 'auto') {
+      recognition.lang = navigator.language || 'en-IN';
+    } else {
+      recognition.lang = currentLanguage;
+    }
 
     sessionFinalSegmentsRef.current = [];
+    latestTranscriptRef.current = '';
     lastProcessedTranscriptRef.current = '';
     setTranscript('');
     setVoiceFeedback('');
@@ -143,7 +152,7 @@ export const VoiceCommandProvider = ({ children }) => {
       isStartingRef.current = false;
       setIsListening(true);
       if (process.env.NODE_ENV === 'development') {
-        console.log(`[VOICE DEBUG] Recognition STARTED with language = ${currentLanguage}`);
+        console.log(`[VOICE DEBUG] Recognition STARTED with mode = ${currentLanguage} (locale = ${recognition.lang})`);
       }
     };
 
@@ -153,14 +162,26 @@ export const VoiceCommandProvider = ({ children }) => {
 
       for (let i = 0; i < event.results.length; i++) {
         const res = event.results[i];
-        const text = res[0] ? res[0].transcript : '';
+        let bestText = res[0] ? res[0].transcript : '';
+
+        // Check top alternatives to pick highest confidence or clearest speech segment
+        if (res.length > 1) {
+          let highestConfidence = res[0]?.confidence || 0;
+          for (let a = 1; a < res.length; a++) {
+            if (res[a] && res[a].confidence > highestConfidence) {
+              highestConfidence = res[a].confidence;
+              bestText = res[a].transcript;
+            }
+          }
+        }
+
         if (res.isFinal) {
-          if (text.trim()) {
-            finalSegments.push(text.trim());
+          if (bestText.trim()) {
+            finalSegments.push(bestText.trim());
           }
         } else {
-          if (text.trim()) {
-            interimText += (interimText ? ' ' : '') + text.trim();
+          if (bestText.trim()) {
+            interimText += (interimText ? ' ' : '') + bestText.trim();
           }
         }
       }
@@ -169,8 +190,15 @@ export const VoiceCommandProvider = ({ children }) => {
       const joinedFinal = finalSegments.join(' ');
       const combinedDisplay = (joinedFinal + (interimText ? (joinedFinal ? ' ' : '') + interimText : '')).trim();
 
+      latestTranscriptRef.current = combinedDisplay;
+
+      if (combinedDisplay) {
+        const detected = detectLanguage(combinedDisplay, currentLanguage);
+        setAutoDetectedLang(detected);
+      }
+
       if (process.env.NODE_ENV === 'development') {
-        console.log(`[VOICE DEBUG] lang: ${currentLanguage} | interim: "${interimText}" | final: "${joinedFinal}"`);
+        console.log(`[VOICE DEBUG] mode: ${currentLanguage} | interim: "${interimText}" | final: "${joinedFinal}"`);
       }
 
       // Real-time preview update for input field
@@ -187,13 +215,15 @@ export const VoiceCommandProvider = ({ children }) => {
       }
 
       if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-        setVoiceFeedback('Microphone permission denied. Please allow microphone access in browser settings.');
+        setVoiceFeedback('Microphone permission denied. Click the camera/lock icon in browser address bar to allow mic access.');
+      } else if (event.error === 'audio-capture') {
+        setVoiceFeedback('No microphone detected. Please connect a working microphone to your device.');
       } else if (event.error === 'language-not-supported') {
-        setVoiceFeedback(`Speech recognition language (${currentLanguage}) is not supported on this device/browser.`);
+        setVoiceFeedback(`Speech recognition language (${currentLanguage}) is not supported on this browser.`);
       } else if (event.error === 'no-speech') {
-        setVoiceFeedback('No speech detected. Please try again.');
+        setVoiceFeedback('No speech detected. Please speak clearly into your microphone.');
       } else if (event.error === 'network') {
-        setVoiceFeedback('Network error during speech recognition. Please check connection.');
+        setVoiceFeedback('Network connection required for speech recognition.');
       }
     };
 
@@ -206,8 +236,11 @@ export const VoiceCommandProvider = ({ children }) => {
         console.log('[VOICE DEBUG] Recognition ENDED');
       }
 
-      // Collect accumulated final transcript segments for the active session
-      const finalResult = sessionFinalSegmentsRef.current.join(' ').trim();
+      // Collect accumulated final transcript or fall back to latest captured interim display
+      let finalResult = sessionFinalSegmentsRef.current.join(' ').trim();
+      if (!finalResult && latestTranscriptRef.current.trim()) {
+        finalResult = latestTranscriptRef.current.trim();
+      }
 
       if (finalResult && finalResult !== lastProcessedTranscriptRef.current) {
         lastProcessedTranscriptRef.current = finalResult;
@@ -250,7 +283,14 @@ export const VoiceCommandProvider = ({ children }) => {
   }, [startListening, stopListening]);
 
   const setLanguage = useCallback((langCode) => {
-    setCurrentLanguage(langCode);
+    let normalized = langCode;
+    if (langCode === 'auto') normalized = 'auto';
+    else if (langCode === 'ta') normalized = 'ta-IN';
+    else if (langCode === 'te') normalized = 'te-IN';
+    else if (langCode === 'hi') normalized = 'hi-IN';
+    else if (langCode === 'en') normalized = 'en-IN';
+
+    setCurrentLanguage(normalized);
     if (isListeningRef.current) {
       stopListening();
       setTimeout(() => {
@@ -280,6 +320,7 @@ export const VoiceCommandProvider = ({ children }) => {
         isListening,
         isContinuous,
         currentLanguage,
+        autoDetectedLang,
         transcript,
         voiceFeedback,
         isAssistantOpen,
