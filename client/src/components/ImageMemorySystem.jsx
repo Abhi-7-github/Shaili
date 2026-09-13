@@ -14,8 +14,10 @@ import {
   AlertCircle,
   Eye,
   Check,
-  Plus
+  Plus,
+  Shirt
 } from 'lucide-react';
+import VirtualTryOn from './VirtualTryOn';
 
 const CATEGORIES = [
   'wedding',
@@ -73,6 +75,7 @@ export const ImageMemorySystem = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [showOutfitModal, setShowOutfitModal] = useState(false);
   const [outfitError, setOutfitError] = useState('');
+  const [vtonGarment, setVtonGarment] = useState(null);
 
   // Load User Images on Mount
   useEffect(() => {
@@ -455,6 +458,9 @@ export const ImageMemorySystem = () => {
                     <button className="overlay-btn view" title="View Fullscreen" onClick={(e) => { e.stopPropagation(); setActiveImage(img); }}>
                       <Eye size={18} />
                     </button>
+                    <button className="overlay-btn tryon" title="Virtual Try-On" onClick={(e) => { e.stopPropagation(); setVtonGarment(img); }}>
+                      <Shirt size={18} />
+                    </button>
                     <button
                       className="overlay-btn delete"
                       title="Delete Memory"
@@ -771,9 +777,15 @@ export const ImageMemorySystem = () => {
               ) : null}
             </div>
           </div>
-        </div>
+      {/* 👗 Virtual Try-On Modal */}
+      {vtonGarment && (
+        <VirtualTryOn
+          isModal={true}
+          initialGarmentUrl={vtonGarment.url}
+          initialGarmentTitle={vtonGarment.description || 'Wardrobe Item'}
+          onClose={() => setVtonGarment(null)}
+        />
       )}
-
     </div>
   );
 };

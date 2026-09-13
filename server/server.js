@@ -6,6 +6,7 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const imageRoutes = require('./routes/imageRoutes');
 const chatRoutes = require('./routes/chatRoutes');
+const virtualTryOnRoutes = require('./routes/virtualTryOnRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -24,6 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/images', imageRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/virtual-tryon', virtualTryOnRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
