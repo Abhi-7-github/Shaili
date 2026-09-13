@@ -12,6 +12,7 @@ const outfitRoutes = require('./routes/outfitRoutes');
 const insightsRoutes = require('./routes/insightsRoutes');
 const imageRoutes = require('./routes/imageRoutes');
 const chatRoutes = require('./routes/chatRoutes');
+const virtualTryOnRoutes = require('./routes/virtualTryOnRoutes');
 
 // Import Error Handler Middleware
 const errorHandler = require('./middleware/errorHandler');
@@ -37,6 +38,7 @@ app.use('/api/outfits', outfitRoutes);
 app.use('/api/insights', insightsRoutes);
 app.use('/api/images', imageRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/virtual-tryon', virtualTryOnRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

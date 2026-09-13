@@ -1,3 +1,4 @@
+import ARPage from './components/ARPage';
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -5,6 +6,8 @@ import { AuthForm } from './components/AuthForm';
 import { Dashboard } from './components/Dashboard';
 import { UploadPage } from './components/UploadPage';
 import { ShailiLandingPage } from './components/ShailiLandingPage';
+
+import VirtualTryOn from './components/VirtualTryOn';
 
 // Protected Route wrapper component
 const ProtectedRoute = ({ children }) => {
@@ -92,6 +95,19 @@ function App() {
             element={
               <ProtectedRoute>
                 <UploadPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* AR Try-On route: /ar */}
+          <Route path="/ar" element={<ARPage />} />
+
+          {/* AI Virtual Try-On route: /try-on */}
+          <Route
+            path="/try-on"
+            element={
+              <ProtectedRoute>
+                <VirtualTryOn />
               </ProtectedRoute>
             }
           />
