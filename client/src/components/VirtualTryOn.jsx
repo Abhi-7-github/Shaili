@@ -45,7 +45,9 @@ export const VirtualTryOn = ({ initialGarmentUrl, initialGarmentTitle, onClose, 
   const [resultImageUrl, setResultImageUrl] = useState(null);
   const [currentRequestId, setCurrentRequestId] = useState(null);
   const [error, setError] = useState(null);
+  const [errorCode, setErrorCode] = useState(null);
   const [errorDetails, setErrorDetails] = useState(null);
+
 
   // Person photo file change
   const handlePersonFileChange = (e) => {
@@ -122,6 +124,7 @@ export const VirtualTryOn = ({ initialGarmentUrl, initialGarmentTitle, onClose, 
     setResultImageUrl(null);
     setCurrentRequestId(requestId);
     setError(null);
+    setErrorCode(null);
     setErrorDetails(null);
 
     const formData = new FormData();
@@ -138,7 +141,7 @@ export const VirtualTryOn = ({ initialGarmentUrl, initialGarmentTitle, onClose, 
     }
 
     try {
-      const res = await fetch('/api/virtual-tryon', {
+      const res = await fetch('/api/virtual-try-on', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -149,14 +152,17 @@ export const VirtualTryOn = ({ initialGarmentUrl, initialGarmentTitle, onClose, 
       const data = await res.json();
 
       if (!res.ok || !data.success) {
+        setErrorCode(data.code || 'VTON_GENERATION_FAILED');
         setError(data.message || 'Virtual Try-On generation failed.');
         setErrorDetails(data.details || null);
         setResultImageUrl(null);
       } else {
         setResultImageUrl(data.resultImageUrl);
+        setErrorCode(null);
       }
     } catch (err) {
       console.error('[Virtual Try-On Request Error]:', err);
+      setErrorCode('NETWORK_ERROR');
       setError('Failed to connect to the server. Please check your connection and try again.');
     } finally {
       setIsProcessing(false);
@@ -166,6 +172,7 @@ export const VirtualTryOn = ({ initialGarmentUrl, initialGarmentTitle, onClose, 
   const handleReset = () => {
     setResultImageUrl(null);
     setError(null);
+    setErrorCode(null);
     setErrorDetails(null);
   };
 
@@ -350,12 +357,22 @@ export const VirtualTryOn = ({ initialGarmentUrl, initialGarmentTitle, onClose, 
 
             {/* Error Message Display */}
             {error && (
-              <div className="mb-4 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs">
+              <div className="mb-4 p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs shadow-sm">
                 <div className="flex items-start gap-2.5">
-                  <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-bold text-red-800">{error}</p>
-                    {errorDetails && <p className="mt-1 text-[11px] text-red-600 leading-relaxed">{errorDetails}</p>}
+                  <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="font-bold text-amber-900">{error}</p>
+                    {errorDetails && <p className="mt-1 text-[11px] text-amber-700 leading-relaxed">{errorDetails}</p>}
+                    {errorCode === 'VTON_TEMPORARILY_UNAVAILABLE' && (
+                      <button
+                        onClick={handleTryOnSubmit}
+                        disabled={isProcessing}
+                        className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#6C151E] text-[#F5DABF] font-semibold rounded-lg text-xs hover:bg-[#541017] transition-colors cursor-pointer"
+                      >
+                        <RefreshCw className={`w-3.5 h-3.5 ${isProcessing ? 'animate-spin' : ''}`} />
+                        <span>Retry Manually</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
